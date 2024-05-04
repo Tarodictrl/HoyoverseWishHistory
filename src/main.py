@@ -61,16 +61,20 @@ flag = False
 for i in range(len(found)-1, -1, -1):
     t = re.findall(r"(https.+?game_biz=)", found[i])
     link = t[0]
-    print(f"Checking link: {i}")
+    os.system("cls")
+    print(f"Checking link: {i}\n")
     test_result = testUrl(link)
     if test_result.get("retcode", -1) == 0:
         flag = True
         print(link)
         pyperclip.copy(link)
-        print("\033[92m" + "Link copied to clipboard!" + "\x1b[0m")
+        print("\033[92m" + "\nLink copied to clipboard!\n" + "\x1b[0m")
         break
     time.sleep(1)
 
 if not flag:
-    print("Cannot find the wish history url! Make sure to open the wish history first!")
-input("Press to close!\n")
+    print("Cannot find the wish history url! Make sure to open the wish history first!\n")
+
+for i in range(9, 0, -1):
+    print(f"Window will close after: {i} s", end="\r", flush=True)
+    time.sleep(1)
