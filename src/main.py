@@ -15,8 +15,18 @@ from core.constants import (
     API_HOST,
     PARAMS,
     LOG_LOCATION,
-    HEADERS
+    HEADERS,
+    GITHUB_RELEASE_URL,
+    VERSION
 )
+
+
+def checkNeedUpdate() -> Optional[str]:
+    response = requests.get(GITHUB_RELEASE_URL)
+    if response.status_code == 200:
+        latest_version = response.json().get("tag_name")
+        if VERSION != latest_version:
+            return latest_version
 
 
 def testUrl(url: str) -> Optional[dict]:
@@ -74,6 +84,9 @@ for i in range(len(found)-1, -1, -1):
 
 if not flag:
     print("Cannot find the wish history url! Make sure to open the wish history first!\n")
+
+if checkNeedUpdate():
+    print("\033[92m" + "A new version is available, visit: https://github.com/Tarodictrl/GenshinWishHistory/releases/latest\n" + "\x1b[0m")
 
 for i in range(9, 0, -1):
     print(f"Window will close after: {i} s", end="\r", flush=True)

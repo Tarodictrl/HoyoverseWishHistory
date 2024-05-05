@@ -11,3 +11,5 @@ PARAMS = {
 HEADERS = {
     "ContentType": "application/json"
 }
+VERSION = "1.2.0"
+GITHUB_RELEASE_URL = "https://api.github.com/repos/Tarodictrl/GenshinWishHistory/releases/latest"
