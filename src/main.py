@@ -16,7 +16,7 @@ from urllib.parse import parse_qs
 class Wish:
     genshin_params = dict(lang="en-us", gacha_type="301", size=5)
     github_release_url = "https://api.github.com/repos/Tarodictrl/GenshinWishHistory/releases/latest"
-    version = "1.3.0"
+    version = "1.3.1"
 
     def __init__(self, region: str) -> None:
         self.genshin_api_url = self._getGenshinApiUrl(region)
@@ -99,7 +99,8 @@ def printLogo():
 
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
-parser.add_argument("-a", help="Open paimon.moe automatically", action='store_true')
+parser.add_argument("--open", help="Open paimon.moe automatically (Default)", action='store_true', default=True)
+parser.add_argument("--no-open", help="Don't open paimon.moe automatically", dest='open', action='store_false')
 parser.add_argument("-r", help="Select region. Support: global, china",
                     choices=["global", "china"], metavar='', default="global")
 args = parser.parse_args()
@@ -127,11 +128,12 @@ if __name__ == "__main__":
     finally:
         if not flag:
             print("Cannot find the wish history url! Make sure to open the wish history first!\n")
+        else:
+            if args.open:
+                import webbrowser
+                webbrowser.open('https://paimon.moe/wish/import', new=2)
         if wish.checkNeedUpdate():
             print("\033[92m" + "A new version is available, visit: https://github.com/Tarodictrl/GenshinWishHistory/releases/latest\n" + "\x1b[0m")
-        if args.a:
-            import webbrowser
-            webbrowser.open('https://paimon.moe/wish/import', new=2)
         for i in range(9, 0, -1):
             print(f"Window will close after: {i} s", end="\r", flush=True)
             time.sleep(1)
