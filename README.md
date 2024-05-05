@@ -1,7 +1,7 @@
 # Genshin Impact Wish History
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/tarodictrl/GenshinWishHistory?style=flat-square)](https://github.com/tarodictrl/GenshinWishHistory/releases) [![GitHub](https://img.shields.io/github/license/tarodictrl/GenshinWishHistory?style=flat-square)](https://github.com/tarodictrl/GenshinWishHistory/blob/main/LICENSE) ![GitHub repo size](https://img.shields.io/github/repo-size/tarodictrl/GenshinWishHistory?style=flat-square&label=size) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/tarodictrl/GenshinWishHistory/total?style=flat-square)
 
-Get Genshin Impact wish url for [paimon.moe](paimon.moe)
+Get Genshin Impact wish url for [paimon.moe](https://paimon.moe)
 
 ### Installation
 ```bash
