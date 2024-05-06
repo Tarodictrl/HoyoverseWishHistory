@@ -3,6 +3,7 @@ import os
 import re
 from pathlib import Path
 import time
+import toml
 from typing import Optional
 import tempfile
 import subprocess
@@ -21,11 +22,18 @@ class Wish:
     def __init__(self, region: str) -> None:
         self.genshin_api_url = self._getGenshinApiUrl(region)
         self.log_location = self._getGenshinLogPath(region)
+        self.version = self._getVersion()
+
+    @staticmethod
+    def _getVersion():
+        with open("../pyproject.toml", "r") as file:
+            pyproject_contents = file.read()
+        return toml.loads(pyproject_contents)["tool"]["poetry"]["version"]
 
     @staticmethod
     def _getGenshinApiUrl(region: str) -> str:
         if region == "china":
-            return "public-operation-hk4e.mihoyo.com"
+            return "https://public-operation-hk4e.mihoyo.com"
         return "https://hk4e-api-os.hoyoverse.com"
 
     @staticmethod

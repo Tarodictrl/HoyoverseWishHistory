@@ -4,3 +4,4 @@ idna==3.7
 requests==2.31.0
 urllib3==2.2.1
 pyperclip==1.8.2
+toml==0.10.2
