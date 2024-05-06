@@ -17,7 +17,6 @@ from urllib.parse import parse_qs
 class Wish:
     genshin_params = dict(lang="en-us", gacha_type="301", size=5)
     github_release_url = "https://api.github.com/repos/Tarodictrl/GenshinWishHistory/releases/latest"
-    version = "1.3.1"
 
     def __init__(self, region: str) -> None:
         self.genshin_api_url = self._getGenshinApiUrl(region)
