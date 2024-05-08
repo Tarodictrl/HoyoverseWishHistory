@@ -13,52 +13,57 @@ import pyperclip
 from urllib.parse import urlparse
 from urllib.parse import parse_qs
 
+__version__ = "1.3.3"
+
 
 class Wish:
     genshin_params = dict(lang="en-us", gacha_type="301", size=5)
     github_release_url = "https://api.github.com/repos/Tarodictrl/GenshinWishHistory/releases/latest"
 
-    def __init__(self, region: str) -> None:
-        self.genshin_api_url = self._getGenshinApiUrl(region)
-        self.log_location = self._getGenshinLogPath(region)
-        self.version = self._getVersion()
+    def __init__(self, game: str, region: str) -> None:
+        self._game = game
+        self._api_url = self._getApiUrl(game, region)
+        self._log_location = self._getLogPath(game, region)
 
     @staticmethod
-    def _getVersion():
-        with open("../pyproject.toml", "r") as file:
-            pyproject_contents = file.read()
-        return toml.loads(pyproject_contents)["tool"]["poetry"]["version"]
+    def _getApiUrl(game: str, region: str) -> str:
+        if game == "GenshinImpact":
+            if region == "china":
+                return "https://public-operation-hk4e.mihoyo.com"
+            return "https://hk4e-api-os.hoyoverse.com"
+        elif game == "HonkaiStarRail":
+            return "https://api-os-takumi.mihoyo.com"
 
     @staticmethod
-    def _getGenshinApiUrl(region: str) -> str:
-        if region == "china":
-            return "https://public-operation-hk4e.mihoyo.com"
-        return "https://hk4e-api-os.hoyoverse.com"
-
-    @staticmethod
-    def _getGenshinLogPath(region: str) -> str:
+    def _getLogPath(game: str, region: str) -> str:
         profile = os.environ['USERPROFILE']
-        if region == "china":
-            china = "\u539f\u795e"
-            return f"{profile}\AppData\LocalLow\miHoYo\{china}\output_log.txt"
-        return f"{profile}\\AppData\\LocalLow\\miHoYo\\Genshin Impact\\output_log.txt"
+        if game == "GenshinImpact":
+            if region == "china":
+                china = "\u539f\u795e"
+                return f"{profile}\\AppData\\LocalLow\\miHoYo\\{china}\\output_log.txt"
+            return f"{profile}\\AppData\\LocalLow\\miHoYo\\Genshin Impact\\output_log.txt"
+        elif game == "HonkaiStarRail":
+            return f"{profile}\\AppData\\LocalLow\\Cognosphere\\Star Rail\\Player.log"
 
     def checkNeedUpdate(self) -> bool:
         response = requests.get(self.github_release_url)
         if response.status_code == 200:
             latest_version = response.json().get("tag_name")
-            if self.version < latest_version:
+            if __version__ < latest_version:
                 return True
         return False
 
     def loadLogs(self):
-        if not os.path.exists(self.log_location):
+        if not os.path.exists(self._log_location):
             raise FileNotFoundError("Cannot find the log file! Make sure to open the wish history first!")
-        with open(self.log_location) as f:
+        with open(self._log_location) as f:
             return f.read()
 
     def loadCaches(self, logs: str) -> list:
-        matches = re.search(r"(?m).:/.+(GenshinImpact_Data|YuanShen_Data)", logs, re.I)
+        if self._game == "GenshinImpact":
+            matches = re.search(r"(?m).:/.+(GenshinImpact_Data|YuanShen_Data)", logs, re.I)
+        if self._game == "HonkaiStarRail":
+            matches = re.search(r"(.:/.+StarRail_Data)", logs, re.I)
         if matches is None:
             raise FileNotFoundError("Cannot find the wish history url! Make sure to open the wish history first!")
         game_dir = matches.group()
@@ -73,26 +78,47 @@ class Wish:
         with open(temp_path, encoding="utf-8", errors='ignore') as f:
             content = f.read()
         splitted = content.split("1/0/")
-        found = [x for x in splitted if re.search("webview_gacha", x) is not None]
+        if self._game == "GenshinImpact":
+            found = [x for x in splitted if re.search("webview_gacha", x) is not None]
+        if self._game == "HonkaiStarRail":
+            found = [x for x in splitted if re.search("/getGachaLog", x) is not None]
         return found
 
     def getLink(self, cache: str) -> Optional[str]:
-        t = re.findall(r"(https.+?game_biz=)", cache)
+        if self._game == "GenshinImpact":
+            t = re.findall(r"(https.+?game_biz=)", cache)
+        if self._game == "HonkaiStarRail":
+            t = re.findall(r"(https.+?end_id=)", cache)
         link = t[0]
-        test_result = self.testUrl(link)
-        if test_result.get("retcode", -1) == 0:
+        if self._game == "GenshinImpact":
+            test_result = self.testGenshinUrl(link)
+        elif self._game == "HonkaiStarRail":
+            test_result = self.testHonkaiUrl(link)
+        if test_result:
             return link
 
-    def testUrl(self, url: str) -> Optional[dict]:
+    def testGenshinUrl(self, url: str) -> bool:
         try:
-            uri = f"{self.genshin_api_url}/gacha_info/api/getGachaLog"
+            uri = f"{self._api_url}/gacha_info/api/getGachaLog"
             params = parse_qs(urlparse(url).query)
             params.update(self.genshin_params)
             response = requests.get(url=uri, params=params)
             if response.status_code == 200:
-                return response.json()
+                test_result = response.json()
+                return test_result.get("retcode", -1) == 0
         except TimeoutError:
             print("Check link failed!")
+        return False
+
+    def testHonkaiUrl(self, url: str) -> bool:
+        try:
+            response = requests.get(url=url)
+            if response.status_code == 200:
+                test_result = response.json()
+                return test_result.get("retcode", -1) == 0
+        except TimeoutError:
+            print("Check link failed!")
+        return False
 
 
 def printLogo():
@@ -107,6 +133,8 @@ def printLogo():
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument("--open", help="Open paimon.moe automatically (Default)", action='store_true', default=True)
+parser.add_argument("--game", help="Select game. Support: GenshinImpact, HonkaiStarRail (Genshin Impact Default)",
+                    choices=["GenshinImpact", "HonkaiStarRail"], default="GenshinImpact", metavar='')
 parser.add_argument("--no-open", help="Don't open paimon.moe automatically", dest='open', action='store_false')
 parser.add_argument("-r", help="Select region. Support: global, china",
                     choices=["global", "china"], metavar='', default="global")
@@ -114,7 +142,7 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
     flag = False
-    wish = Wish(region=args.r)
+    wish = Wish(game=args.game, region=args.r)
     try:
         logs = wish.loadLogs()
         caches = wish.loadCaches(logs)
@@ -138,7 +166,10 @@ if __name__ == "__main__":
         else:
             if args.open:
                 import webbrowser
-                webbrowser.open('https://paimon.moe/wish/import', new=2)
+                if args.game == "GenshinImpact":
+                    webbrowser.open('https://paimon.moe/wish/import', new=2)
+                if args.game == "HonkaiStarRail":
+                    webbrowser.open('https://pom.moe/warp/import', new=2)
         if wish.checkNeedUpdate():
             print("\033[92m" + "A new version is available, visit: https://github.com/Tarodictrl/GenshinWishHistory/releases/latest\n" + "\x1b[0m")
         for i in range(9, 0, -1):
