@@ -11,11 +11,12 @@ or download [latest release](github.com/Tarodictrl/GenshinWishHistory/releases/l
 ### Arguments
 ```bash
 >>> python main.py -h
-usage: main.py [-h] [--open] [--no-open] [-r]
+usage: main.py [-h] [--open] [--game] [--no-open] [-r]
 
 optional arguments:
   -h, --help  show this help message and exit
   --open      Open paimon.moe automatically (Default)
+  --game      Select game. Support: GenshinImpact, HonkaiStarRail (Genshin Impact Default)
   --no-open   Don't open paimon.moe automatically
   -r          Select region. Support: global, china
 ```
