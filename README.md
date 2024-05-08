@@ -8,6 +8,17 @@ Get Genshin Impact wish url for [paimon.moe](https://paimon.moe)
 git clone https://github.com/Tarodictrl/GenshinWishHistory.git
 ```
 or download [latest release](github.com/Tarodictrl/GenshinWishHistory/releases/latest)
+### Arguments
+```bash
+>>> python main.py -h
+usage: main.py [-h] [--open] [--no-open] [-r]
+
+optional arguments:
+  -h, --help  show this help message and exit
+  --open      Open paimon.moe automatically (Default)
+  --no-open   Don't open paimon.moe automatically
+  -r          Select region. Support: global, china
+```
 ### Usage with python
 ```
 cd GenshinWishHistory\src
