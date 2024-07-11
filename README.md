@@ -1,13 +1,13 @@
-# Genshin Impact Wish History
+# Hoyoverse Wish History
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/tarodictrl/GenshinWishHistory?style=flat-square)](https://github.com/tarodictrl/GenshinWishHistory/releases) [![GitHub](https://img.shields.io/github/license/tarodictrl/GenshinWishHistory?style=flat-square)](https://github.com/tarodictrl/GenshinWishHistory/blob/main/LICENSE) ![GitHub repo size](https://img.shields.io/github/repo-size/tarodictrl/GenshinWishHistory?style=flat-square&label=size) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/tarodictrl/GenshinWishHistory/total?style=flat-square)
 
 Get Genshin Impact wish url for [paimon.moe](https://paimon.moe)
 
 ### Installation
 ```bash
-git clone https://github.com/Tarodictrl/GenshinWishHistory.git
+git clone https://github.com/Tarodictrl/HoyoverseWishHistory.git
 ```
-or download [latest release](github.com/Tarodictrl/GenshinWishHistory/releases/latest)
+or download [latest release](github.com/Tarodictrl/HoyoverseWishHistory/releases/latest)
 ### Arguments
 ```bash
 >>> python main.py -h
@@ -16,13 +16,13 @@ usage: main.py [-h] [--open] [--game] [--no-open] [-r]
 optional arguments:
   -h, --help  show this help message and exit
   --open      Open paimon.moe automatically (Default)
-  --game      Select game. Support: GenshinImpact, HonkaiStarRail (Genshin Impact Default)
+  --game      Select game. Support: GenshinImpact, HonkaiStarRail, ZZZ (Genshin Impact Default)
   --no-open   Don't open paimon.moe automatically
   -r          Select region. Support: global, china
 ```
 ### Usage with python
 ```
-cd GenshinWishHistory\src
+cd HoyoverseWishHistory\src
 python -m venv .venv
 .venv\Scripts\activate
 python main.py
@@ -32,4 +32,4 @@ python main.py
 - [Original powershell script](https://gist.github.com/MadeBaruna/1d75c1d37d19eca71591ec8a31178235/)
 
 ### License
-This project is made available under the [MIT License](https://github.com/Tarodictrl/GenshinWishHistory/blob/main/LICENSE).
+This project is made available under the [MIT License](https://github.com/Tarodictrl/HoyoverseWishHistory/blob/main/LICENSE).
